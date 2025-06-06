@@ -1,43 +1,67 @@
-function getFavoritesfromLocalStorage(type) {
-    const favorites = localStorage.getItem(`favorite${type}s`)
-    return favorites ? JSON.parse(favorites) : {}
+const favoritesKey = "rickAndMortyFavorites";
+
+/**
+ * Obtiene los elementos favoritos almacenados en el localStorage.
+ * Si no hay favoritos, devuelve un objeto con arrays vacíos para 'Character' y 'Episode'.
+ * @function
+ * @returns {object} Un objeto que contiene arrays de IDs de personajes y episodios favoritos.
+ */
+function getFavorites() {
+    const favorites = localStorage.getItem(favoritesKey);
+    return favorites ? JSON.parse(favorites) : { Character: [], Episode: [] };
 }
 
-function saveFavoritesInLocalStorage(type, favorites) {
-    localStorage.setItem(`favorite${type}s`, JSON.stringify(favorites))
-}
+export { getFavorites };
 
-let favoriteCharacters = getFavoritesfromLocalStorage("Character")
-let favoriteEpisodes = getFavoritesfromLocalStorage("Episode")
-
+/**
+ * Verifica si un elemento es favorito.
+ * @function
+ * @param {number} id - El ID del elemento a verificar.
+ * @param {string} type - El tipo de elemento ('Character' o 'Episode').
+ * @returns {boolean} `true` si el elemento es favorito, `false` en caso contrario.
+ */
 export function isFavorite(id, type) {
-    if (type === "Character") {
-        return !!favoriteCharacters[id]
-    } else {
-        return !!favoriteEpisodes[id]
-    }
+    const favorites = getFavorites();
+    return favorites[type] && favorites[type].includes(id);
 }
 
-export function changeFavorite(id, type, buttonFav) {
-    let currentFavorites
-    let storageKey
+/**
+ * Agrega o quita un elemento de la lista de favoritos y actualiza visualmente un botón.
+ * @function
+ * @param {number} id - El ID del elemento a cambiar.
+ * @param {string} type - El tipo de elemento ('Character' o 'Episode').
+ * @param {HTMLElement} [buttonElement] - Opcional. El elemento del botón HTML para aplicar o quitar la clase 'active'.
+ * @returns {void}
+ */
+export function changeFavorite(id, type, buttonElement) {
+    let favorites = getFavorites();
 
-    if (type === "Character") {
-        currentFavorites = favoriteCharacters
-        storageKey = "Character"
-    } else {
-        currentFavorites = favoriteEpisodes
-        storageKey = "Episode"
+    if (!favorites[type]) {
+        favorites[type] = [];
     }
 
-    if (!currentFavorites[id]) {
-        currentFavorites[id] = true
-        buttonFav.classList.add("active")
-        console.log(`${type} ${id} añadido a favoritos.`);
+    const index = favorites[type].indexOf(id);
+
+    if (index > -1) {
+        favorites[type].splice(index, 1);
+        if (buttonElement) {
+            buttonElement.classList.remove('active');
+        }
     } else {
-        delete currentFavorites[id]
-        buttonFav.classList.remove("active")
-        console.log(`${type} ${id} quitado de favoritos.`);
+        favorites[type].push(id);
+        if (buttonElement) {
+            buttonElement.classList.add('active');
+        }
     }
-    saveFavoritesInLocalStorage(storageKey, currentFavorites);
+    saveFavorites(favorites);
+}
+
+/**
+ * Guarda el objeto de favoritos en el localStorage.
+ * @function
+ * @param {object} favorites - El objeto de favoritos a guardar.
+ * @returns {void}
+ */
+function saveFavorites(favorites) {
+    localStorage.setItem(favoritesKey, JSON.stringify(favorites));
 }

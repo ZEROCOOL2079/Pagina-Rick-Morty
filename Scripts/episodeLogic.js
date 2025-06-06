@@ -1,13 +1,23 @@
-import { getEpisode } from './apiService.js';
+import { getEpisode, getEpisodesByIds } from './apiService.js';
 import { createEpisodeCard, clearCardContainer, updatePagination, disablePagination } from './viewBuilder.js';
 import { modalEpisode } from './modalBuilder.js';
-import { changeFavorite, isFavorite } from './favoriteStorage.js';
+import { changeFavorite, isFavorite, getFavorites } from './favoriteStorage.js';
 
 let currentPage = 1;
 let totalPages = 1;
 let currentNameFilter = "";
 let showFavoritesOnly = false;
 
+const ITEMS_PER_PAGE_FAVORITES = 20;
+let allFavoriteEpisodes = [];
+
+/**
+ * Renderiza las tarjetas de episodios en el contenedor principal.
+ * Gestiona la visualización de episodios normales con filtros o solo episodios favoritos con paginación local.
+ * @async
+ * @param {number} page - El número de página actual a renderizar.
+ * @returns {Promise<void>}
+ */
 async function render(page) {
     const cardContainer = document.getElementById("card-container");
     if (!cardContainer) {
@@ -17,19 +27,41 @@ async function render(page) {
 
     disablePagination();
 
-    const filters = {
-        name: currentNameFilter
-    };
-
-    const { episodes: allEpisodes, info } = await getEpisode(page, filters);
-
-    let episodesToRender = allEpisodes;
+    let episodesToRender = [];
+    let info = null;
 
     if (showFavoritesOnly) {
-        episodesToRender = allEpisodes.filter(episode => isFavorite(episode.id, 'Episode'));
-        totalPages = 1;
-        updatePagination({ prev: null, next: null, pages: 1 }, page);
+        const favoriteEpisodeIds = getFavorites().Episode;
+
+        if (favoriteEpisodeIds && favoriteEpisodeIds.length > 0) {
+            const response = await getEpisodesByIds(favoriteEpisodeIds);
+            allFavoriteEpisodes = response.episodes;
+
+            const startIndex = (page - 1) * ITEMS_PER_PAGE_FAVORITES;
+            const endIndex = startIndex + ITEMS_PER_PAGE_FAVORITES;
+            episodesToRender = allFavoriteEpisodes.slice(startIndex, endIndex);
+
+            totalPages = Math.ceil(allFavoriteEpisodes.length / ITEMS_PER_PAGE_FAVORITES);
+            updatePagination({
+                count: allFavoriteEpisodes.length,
+                pages: totalPages,
+                prev: page > 1,
+                next: page < totalPages
+            }, page);
+        } else {
+            allFavoriteEpisodes = [];
+            episodesToRender = [];
+            totalPages = 1;
+            updatePagination({ count: 0, pages: 1, prev: null, next: null }, 1);
+        }
     } else {
+        const filters = {
+            name: currentNameFilter
+        };
+        const apiResponse = await getEpisode(page, filters);
+        episodesToRender = apiResponse.episodes;
+        info = apiResponse.info;
+
         if (info) {
             totalPages = info.pages;
             updatePagination(info, page);
@@ -48,16 +80,18 @@ async function render(page) {
             const favBtn = cardElement.querySelector(".favorite-button");
             if (favBtn) {
                 if (isFavorite(episode.id, "Episode")) {
-                    favBtn.classList.add("active")
+                    favBtn.classList.add("active");
+                } else {
+                    favBtn.classList.remove("active");
                 }
 
                 favBtn.addEventListener("click", e => {
-                    e.stopPropagation()
-                    changeFavorite(episode.id, "Episode", favBtn)
+                    e.stopPropagation();
+                    changeFavorite(episode.id, "Episode", favBtn);
                     if (showFavoritesOnly) {
                         render(currentPage);
                     }
-                })
+                });
             }
 
             cardElement.addEventListener("click", () => modalEpisode(episode));
@@ -70,6 +104,11 @@ async function render(page) {
     currentPage = page;
 }
 
+/**
+ * Configura los event listeners para los botones de paginación (anterior y siguiente).
+ * @function
+ * @returns {void}
+ */
 function setupPagination() {
     const prevPage = document.getElementById("prevPage");
     const nextPage = document.getElementById("nextPage");
@@ -91,6 +130,11 @@ function setupPagination() {
     }
 }
 
+/**
+ * Configura los event listeners para los filtros de episodios y el botón de favoritos.
+ * @function
+ * @returns {void}
+ */
 function setupEpisodeFilters() {
     const episodeNameFilterInput = document.getElementById("episodeNameFilter");
     const filterEpisodesByNameButton = document.getElementById("filterEpisodesByNameButton");
@@ -122,6 +166,12 @@ function setupEpisodeFilters() {
     }
 }
 
+/**
+ * Inicializa la página de episodios al configurar la paginación, los filtros y realizar el renderizado inicial.
+ * @async
+ * @function
+ * @returns {Promise<void>}
+ */
 async function initializeEpisodesPage() {
     setupPagination();
     setupEpisodeFilters();

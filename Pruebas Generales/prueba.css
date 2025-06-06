@@ -1,0 +1,73 @@
+html,
+body {
+  height: 100%;
+  /* El html y body deben ocupar el 100% de la altura de la ventana */
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  display: flex;
+  /* Convierte el body en un contenedor flex */
+  flex-direction: column;
+  /* Organiza los elementos hijos en una columna */
+}
+
+/* Estilos para el Header */
+.main-header {
+  background-color: #28a745;
+  /* Color verde */
+  color: white;
+  padding: 15px 20px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  /* flex-shrink: 0; */
+  /* Opcional: Evita que el header se encoja si hay mucho contenido */
+}
+
+.main-header h1 {
+  margin: 0;
+}
+
+.main-header nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0 0;
+  display: flex;
+  justify-content: center;
+}
+
+.main-header nav ul li {
+  margin: 0 15px;
+}
+
+.main-header nav ul li a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.main-header nav ul li a:hover {
+  text-decoration: underline;
+}
+
+/* Estilos para el Contenido Principal (Main) */
+.main-content {
+  flex-grow: 1;
+  /* Esto es clave: El main ocupará todo el espacio disponible */
+  padding: 20px;
+  margin-bottom: 20px;
+  /* Opcional: espacio entre el contenido y el footer */
+}
+
+/* Estilos para el Footer que se muestra al final del contenido */
+.normal-footer {
+  background-color: #333;
+  color: white;
+  text-align: center;
+  padding: 15px 0;
+  /* margin-top: 30px; */
+  /* No es necesario con flex-grow en main */
+  /* flex-shrink: 0; */
+  /* Opcional: Evita que el footer se encoja */
+}

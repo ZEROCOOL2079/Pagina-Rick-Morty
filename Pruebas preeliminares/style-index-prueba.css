@@ -1,0 +1,361 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background-color: #f4f4f4;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  background-color: #2c3e50;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 85px;
+  padding: 5px 10%;
+}
+
+.header .logo {
+  cursor: pointer;
+}
+
+.header .logo img {
+  height: 70px;
+  width: auto;
+}
+
+.header .logo img:hover {
+  transform: scale(1.2);
+}
+
+.header .ul-links {
+  list-style: none;
+}
+
+.header .ul-links li {
+  display: inline-block;
+  padding: 0 20px;
+}
+
+.header .ul-links li:hover {
+  transform: scale(1.1);
+}
+
+.header .ul-links a {
+  font-size: 700;
+  color: #ecf0f1;
+  text-decoration: none;
+}
+
+.header .ul-links a:hover {
+  color: #ffbc0e;
+}
+
+main {
+  display: flex;
+  width: 100%;
+  flex-grow: 1;
+}
+
+main #section-api {
+  display: flex;
+  flex-direction: column;
+  flex-basis: 100%;
+  background-color: #5f738a;
+  width: 100%;
+  align-items: center;
+  padding: 20px;
+}
+
+#section-api h1 {
+  margin-top: 0;
+  font-size: 2em;
+  margin-bottom: 20px;
+  color: #6cff57;
+}
+
+.filters-container {
+  text-align: center;
+  margin-bottom: 20px;
+  color: white;
+}
+
+.filters-container label {
+  margin-right: 10px;
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+.filters-container select {
+  padding: 8px 12px;
+  border-radius: 5px;
+  border: 1px solid #6c757d;
+  background-color: #4a5a6b; 
+  color: white;
+  font-size: 1em;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M287%2C197.6c-3.2%2C3.2-8.3%2C3.2-11.5%2C0L146.2%2C68.9L16.9%2C197.6c-3.2%2C3.2-8.3%2C3.2-11.5%2C0C2.2%2C194.4%2C2.2%2C189.3%2C5.4%2C186.1l134.4-134.4c3.2-3.2%2C8.3-3.2%2C11.5%2C0l134.4%2C134.4C290.2%2C189.3%2C290.2%2C194.4%2C287%2C197.6z%22%2F%3E%3C%2Fsvg%3E"); /* Flecha personalizada */
+  background-repeat: no-repeat;
+  background-position: right 10px top 50%;
+  background-size: 12px auto;
+}
+
+.filters-container select:focus {
+  outline: none;
+  border-color: #6cff57;
+  box-shadow: 0 0 0 0.2rem rgba(108, 255, 87, 0.25);
+}
+
+.filters-container input[type="text"] {
+    padding: 8px 12px;
+    border-radius: 5px;
+    border: 1px solid #6c757d;
+    background-color: #4a5a6b;
+    color: white;
+    font-size: 1em;
+}
+
+.filters-container input[type="text"]::placeholder {
+    color: #b0b8c0; /* Color para el texto de placeholder */
+}
+
+.filters-container input[type="text"]:focus {
+    outline: none;
+    border-color: #6cff57;
+    box-shadow: 0 0 0 0.2rem rgba(108, 255, 87, 0.25);
+}
+
+/* Estilos para el nuevo botón de buscar por nombre */
+.filters-container button {
+    background-color: #007bff; /* Un color diferente para el botón de búsqueda */
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+    margin-left: 10px; /* Pequeño espacio a la izquierda del input */
+}
+
+.filters-container button:hover {
+    background-color: #0056b3;
+}
+
+.filters-container button:disabled {
+    background-color: #7f8c8d;
+    cursor: not-allowed;
+}
+
+/* Puedes añadir un poco de margen entre los contenedores de filtro si se apilan */
+#statusFilterContainer,
+#nameFilterContainer {
+    margin-bottom: 20px; /* Ajusta según sea necesario */
+}
+
+/* Estilos para el botón de favorito (que ahora contiene el ícono) */
+.favorite-toggle {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1; 
+}
+
+/* Estilos para el ícono de estrella en sí */
+.favorite-toggle i {
+    font-size: 1.8em; /* Tamaño de la estrella */
+    color: #ccc; /* Color por defecto (no favorito) */
+    transition: color 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.favorite-toggle:hover i { /* Cuando el botón (que contiene la estrella) se hover */
+    transform: scale(1.1);
+}
+
+.favorite-toggle.favorite i { /* Cuando la estrella es favorita */
+    color: #ffd700; /* Color dorado para la estrella favorita */
+}
+
+#card-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  margin-bottom: 20px;
+  padding: 0 10px;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  width: 400px;
+  background-color: #ecf0f1;
+  border: 1px solid #7f8c8d;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card .img-container {
+  display: flex;
+  flex-shrink: 0;
+  width: 43%;
+  height: 100%;
+  overflow: hidden;
+  border-right: 1px solid #7f8c8d;
+  justify-content: center;
+  align-items: center;
+}
+
+.card .img-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card .card-details {
+  flex: 3 1 0%;
+  position: relative;
+  padding: 0.75rem;
+  color: #2c3e50;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.card .card-details .detail-section {
+  display: flex;
+  justify-content: flex-start;
+  flex: 1 1 0%;
+  flex-direction: column;
+  box-sizing: inherit;
+}
+
+.card-details .detail-section .text-name {
+  font-size: 1.5rem;
+  color: #2c3e50;
+  margin: 0px;
+  padding: 0px;
+}
+
+.card-details .detail-section .status-character {
+  display: flex;
+  align-items: center;
+  text-transform: capitalize;
+  box-sizing: inherit;
+  color: #2c3e50;
+}
+
+.circle-status {
+  height: 8px;
+  width: 8px;
+  margin-right: 0.375rem;
+  border-radius: 50%;
+}
+
+.circle-status.alive {
+  background-color: #55cc44;
+}
+
+.circle-status.dead {
+  background-color: #d63d2e;
+}
+
+.circle-status.unknown {
+  background-color: #9e9e9e;
+}
+
+.card-details .detail-section span {
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 1px;
+}
+
+.text-grey {
+  color: gray;
+}
+
+.card .detail-section .text-detail {
+  font-size: 16px;
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.pagination button {
+  background-color: #2c3e50;
+  color: #ecf0f1;
+  border: none;
+  padding: 10px 20px;
+  margin: 0 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.3s ease;
+}
+
+.pagination button:hover:not(:disabled) {
+  background-color: #34495e;
+}
+
+.pagination button:disabled {
+  background-color: #7f8c8d;
+  cursor: not-allowed;
+}
+
+#currentPage {
+  font-size: 1.1em;
+  font-weight: bold;
+  color: #ecf0f1;
+  margin: 0 10px;
+}
+
+.footer {
+  background: #8e44ad;
+  width: 100%;
+  min-height: 10%;
+  background-color: #2c2c2c;
+  color: #f0f0f0;
+  padding: 20px;
+  text-align: center;
+  font-size: 0.9em;
+  margin-top: auto;
+}
+footer a {
+  color: #8aff8a;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}

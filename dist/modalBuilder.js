@@ -1,72 +1,69 @@
-import { getNameUrl } from "./apiService";
-import { Character, Episode } from "./classes";
-
-const modalDiv = document.querySelector("#modal-div") as HTMLDivElement | null;
-const closeBtn = modalDiv?.querySelector(".close-button") as HTMLSpanElement | null;
-const modalDetailsContainer = modalDiv?.querySelector("#modal-details-container") as HTMLDivElement | null;
-
+import { getNameUrl } from "./apiService.js";
+const modalDiv = document.querySelector("#modal-div");
+const closeBtn = modalDiv?.querySelector(".close-button");
+const modalDetailsContainer = modalDiv?.querySelector("#modal-details-container");
 /**
  * @function
  * @returns {void}
  */
-function showModal(): void {
+function showModal() {
     if (modalDiv) {
         modalDiv.style.display = "flex";
-    } else {
+    }
+    else {
         console.warn("Modal container with ID 'modal-div' not found.");
     }
 }
-
 /**
  * @function
  * @returns {void}
  */
-function hideModal(): void {
+function hideModal() {
     if (modalDiv) {
         modalDiv.style.display = "none";
-    } else {
+    }
+    else {
         console.warn("Modal container with ID 'modal-div' not found.");
     }
     if (modalDetailsContainer) {
         modalDetailsContainer.innerHTML = "";
-    } else {
+    }
+    else {
         console.warn("Modal details container with ID 'modal-details-container' not found.");
     }
 }
-
 if (closeBtn) {
     closeBtn.addEventListener("click", hideModal);
-} else {
+}
+else {
     console.warn("Close button for modal not found.");
 }
-
-window.addEventListener("click", (e: MouseEvent) => {
+window.addEventListener("click", (e) => {
     if (modalDiv && e.target === modalDiv) {
         hideModal();
     }
 });
-
 /**
  * @async
  * @function
  * @param {Character} character
  * @returns {Promise<void>}
  */
-export async function modalCharacters(character: Character): Promise<void> {
-    let statusCharacter: string;
+export async function modalCharacters(character) {
+    let statusCharacter;
     if (character.status === "Alive") {
         statusCharacter = "circle-status alive";
-    } else if (character.status === "Dead") {
+    }
+    else if (character.status === "Dead") {
         statusCharacter = "circle-status dead";
-    } else {
+    }
+    else {
         statusCharacter = "circle-status unknown";
     }
-
-    const allEpisodesNames: string[] = await getNameUrl(character.episodes);
-    const episodesNames: string = allEpisodesNames
-        .map((name: string) => `<span class="character-chip">${name}</span>`)
+    const allEpisodesNames = await getNameUrl(character.episodes);
+    const episodesNames = allEpisodesNames
+        .map((name) => `<span class="character-chip">${name}</span>`)
         .join("");
-
     if (modalDetailsContainer) {
         modalDetailsContainer.innerHTML = `
             <div class="modal-header">
@@ -91,23 +88,22 @@ export async function modalCharacters(character: Character): Promise<void> {
                 </div>
             </div>
         `;
-    } else {
+    }
+    else {
         console.error("Modal details container not found. Cannot display character modal.");
         return;
     }
     showModal();
 }
-
 /**
  * @async
  * @function
  * @param {Episode} episode
  * @returns {Promise<void>}
  */
-export async function modalEpisode(episode: Episode): Promise<void> {
-    const allCharactersNames: string[] = await getNameUrl(episode.characters);
-    const charactersNames: string = allCharactersNames.map((name: string) => `<span class="character-chip">${name}</span>`).join("");
-
+export async function modalEpisode(episode) {
+    const allCharactersNames = await getNameUrl(episode.characters);
+    const charactersNames = allCharactersNames.map((name) => `<span class="character-chip">${name}</span>`).join("");
     if (modalDetailsContainer) {
         modalDetailsContainer.innerHTML = `
             <div class="modal-header">
@@ -124,7 +120,8 @@ export async function modalEpisode(episode: Episode): Promise<void> {
                 </div>
             </div>
         `;
-    } else {
+    }
+    else {
         console.error("Modal details container not found. Cannot display episode modal.");
         return;
     }

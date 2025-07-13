@@ -1,16 +1,9 @@
-import { Character, Episode } from "./classes.js";
+import { Character, Episode } from "./classes";
+import { ApiCharactersResponse, ApiEpisodesResponse, ApiCharacter, ApiEpisode, CreateFromApiFunction, CharacterFilters, EpisodeFilter, ApiResponse, ApiInfo} from "./types";
 
-/**
- * Carga datos desde la API.
- * @function
- * @param {string} url - URL de la API de donde se obtendrán los datos.
- * @param {typeof Character.createFromApi | typeof Episode.createFromApi} createFromApi - Función estática para crear objetos a partir de los datos de la API.
- * @param {number} pageNumber - Número de la página de donde se obtendrán los datos.
- * @returns {Promise<{datas: Array, info: Object | null}>} Un objeto con un array de datos obtenidos y un objeto con la información de paginación.
- */
-async function loadDataFromApi(url, createFromApi, pageNumber) {
-    let dataList = [];
-    let paginationInfo = null;
+async function loadDataFromApi(url: string,createFromApi: CreateFromApiFunction<Character | Episode>,pageNumber: number){
+    let dataList: (Character | Episode)[] = [];
+    let paginationInfo: ApiInfo;
 
     try {
         const response = await fetch(url);
@@ -18,8 +11,9 @@ async function loadDataFromApi(url, createFromApi, pageNumber) {
             throw new Error(`Error HTTP! estado: ${response.status}`);
         }
 
-        const data = await response.json();
+        const data: ApiCharactersResponse | ApiEpisodesResponse = await response.json();
         paginationInfo = data.info;
+
         data.results.forEach((item) => {
             dataList.push(createFromApi(item));
         });
@@ -30,33 +24,20 @@ async function loadDataFromApi(url, createFromApi, pageNumber) {
     }
 }
 
-/**
- * Carga datos desde la API por IDs.
- * Gestiona la respuesta de la API cuando devuelve un array de objetos o un solo objeto,
- * y adapta la información de paginación para este caso.
- * @function
- * @param {string} url - URL de la API donde se obtendrán los datos por ID.
- * @param {typeof Character.createFromApi | typeof Episode.createFromApi} createFromApi - Función estática para crear objetos a partir de los datos de la API.
- * @returns {Promise<{datas: Array, info: Object}>} Un objeto con un array de datos obtenidos y un objeto con la información de paginación (simplificada para IDs).
- */
-async function loadDataFromApiByIds(url, createFromApi) {
-    let dataList = [];
-    let paginationInfo = { count: 0, pages: 0, next: null, prev: null };
+async function loadDataFromApiByIds(url: string, createFromApi: CreateFromApiFunction<Character | Episode>){
+    let dataList: (Character | Episode)[] = [];
+    let paginationInfo: ApiInfo = { count: 0, pages: 0, next: null, prev: null };
 
     try {
-        const response = await fetch(url);
+        const response: Response = await fetch(url);
         if (!response.ok) {
-            if (response.status === 404) {
-                console.warn(`No se encontraron elementos para la URL: ${url}`);
-                return { datas: [], info: paginationInfo };
-            }
             throw new Error(`Error HTTP! estado: ${response.status}`);
         }
         const data = await response.json();
 
         const items = Array.isArray(data) ? data : [data];
 
-        items.forEach((item) => {
+        items.forEach((item: ApiCharacter | ApiEpisode) => {
             dataList.push(createFromApi(item));
         });
 
@@ -74,13 +55,7 @@ async function loadDataFromApiByIds(url, createFromApi) {
     }
 }
 
-/**
- * Agrega un filtro de nombre a la URL.
- * @param {string} url - La URL base.
- * @param {string} name - El nombre a filtrar.
- * @returns {string} La URL con el filtro de nombre añadido.
- */
-function addName(url, name) {
+function addName(url: string, name: string | undefined): string {
     if (name && name.trim() !== "") {
         return `${url}&name=${name.trim()}`;
     }
@@ -88,12 +63,11 @@ function addName(url, name) {
 }
 
 /**
- * Agrega un filtro de estado a la URL.
- * @param {string} url - La URL base.
- * @param {string} status - El estado a filtrar.
- * @returns {string} La URL con el filtro de estado añadido.
+ * @param {string} url
+ * @param {string | undefined} status
+ * @returns {string}
  */
-function addStatus(url, status) {
+function addStatus(url: string, status: string | undefined): string {
     if (status && status.trim() !== "") {
         return `${url}&status=${status.trim()}`;
     }
@@ -101,15 +75,15 @@ function addStatus(url, status) {
 }
 
 /**
- * Obtiene personajes y su información de paginación, aplicando filtros si es necesario.
- * @param {number} pageNumber - Número de la página de donde se obtendrán los datos.
- * @param {object} filters - Objeto que contendrá los filtros a aplicar (name, status).
- * @param {string} [filters.name] - Nombre del personaje a filtrar.
- * @param {string} [filters.status] - Estado del personaje a filtrar.
- * @returns {Promise<{characters: Character[], info: Object | null}>} Un objeto con un array de objetos Character y la información de paginación.
+ * @param {number} pageNumber
+ * @param {CharacterFilters} filters
+ * @returns {Promise<{characters: Character[], info: ApiInfo | null}>}
  */
-export async function getCharacters(pageNumber, filters) {
-    let url = `https://rickandmortyapi.com/api/character/?page=${pageNumber}`;
+export async function getCharacters(
+    pageNumber: number,
+    filters: CharacterFilters
+): Promise<{ characters: Character[]; info: ApiInfo | null }> {
+    let url: string = `https://rickandmortyapi.com/api/character/?page=${pageNumber}`;
 
     url = addName(url, filters.name);
     url = addStatus(url, filters.status);
@@ -119,18 +93,19 @@ export async function getCharacters(pageNumber, filters) {
         Character.createFromApi,
         pageNumber
     );
-    return { characters: datas, info: info };
+    return { characters: datas as Character[], info: info as ApiInfo | null };
 }
 
 /**
- * Obtiene episodios y su información de paginación, aplicando filtros si es necesario.
- * @param {number} pageNumber - Número de la página de donde se obtendrán los datos.
- * @param {object} filter - Objeto que contendrá el filtro de nombre.
- * @param {string} [filter.name] - Nombre del episodio a filtrar.
- * @returns {Promise<{episodes: Episode[], info: Object | null}>} Un objeto con un array de objetos Episode y la información de paginación.
+ * @param {number} pageNumber
+ * @param {EpisodeFilter} filter
+ * @returns {Promise<{episodes: Episode[], info: ApiInfo | null}>}
  */
-export async function getEpisode(pageNumber, filter) {
-    let url = `https://rickandmortyapi.com/api/episode?page=${pageNumber}`;
+export async function getEpisode(
+    pageNumber: number,
+    filter: EpisodeFilter
+): Promise<{ episodes: Episode[]; info: ApiInfo | null }> {
+    let url: string = `https://rickandmortyapi.com/api/episode?page=${pageNumber}`;
     url = addName(url, filter.name);
 
     const { datas, info } = await loadDataFromApi(
@@ -138,22 +113,21 @@ export async function getEpisode(pageNumber, filter) {
         Episode.createFromApi,
         pageNumber
     );
-    return { episodes: datas, info: info };
+    return { episodes: datas as Episode[], info: info as ApiInfo | null };
 }
 
 /**
- * Obtiene los nombres de los elementos (personajes/episodios) a partir de un array de URLs.
- * @param {string[]} arrayUrls - Un array de URLs de la API.
- * @returns {Promise<string[]>} Un array con los nombres de los elementos.
+ * @param {string[]} arrayUrls
+ * @returns {Promise<string[]>}
  */
-export async function getNameUrl(arrayUrls) {
-    const namePromises = arrayUrls.map(async (url) => {
+export async function getNameUrl(arrayUrls: string[]): Promise<string[]> {
+    const namePromises = arrayUrls.map(async (url: string) => {
         try {
-            const response = await fetch(url);
+            const response: Response = await fetch(url);
             if (!response.ok) {
                 throw new Error(`Error HTTP! estado: ${response.status}`);
             }
-            const data = await response.json();
+            const data: { name: string } = await response.json();
             return data.name;
         } catch (error) {
             console.error("Error al obtener el nombre del personaje:", error);
@@ -161,41 +135,43 @@ export async function getNameUrl(arrayUrls) {
         }
     });
 
-    const charactersName = await Promise.all(namePromises);
+    const charactersName: string[] = await Promise.all(namePromises);
     console.log(`charactersNames: ${charactersName}`)
     return charactersName;
 }
 
 /**
- * Obtiene uno o varios personajes por sus IDs.
- * @param {number | number[]} characterIds - Un solo ID o un array de IDs de personajes.
- * @returns {Promise<{characters: Character[], info: Object}>} Un objeto con un array de objetos Character y un objeto de información (simplificado).
+ * @param {number | number[]} characterIds
+ * @returns {Promise<{characters: Character[], info: ApiInfo}>}
  */
-export async function getCharactersByIds(characterIds) {
+export async function getCharactersByIds(
+    characterIds: number | number[]
+): Promise<{ characters: Character[]; info: ApiInfo }> {
     if (!characterIds || (Array.isArray(characterIds) && characterIds.length === 0)) {
         return { characters: [], info: { count: 0, pages: 0, next: null, prev: null } };
     }
 
-    const idsString = Array.isArray(characterIds) ? characterIds.join(',') : characterIds.toString();
-    const url = `https://rickandmortyapi.com/api/character/${idsString}`;
+    const idsString: string = Array.isArray(characterIds) ? characterIds.join(',') : characterIds.toString();
+    const url: string = `https://rickandmortyapi.com/api/character/${idsString}`;
 
     const { datas, info } = await loadDataFromApiByIds(url, Character.createFromApi);
-    return { characters: datas, info: info };
+    return { characters: datas as Character[], info: info as ApiInfo };
 }
 
 /**
- * Obtiene uno o varios episodios por sus IDs.
- * @param {number | number[]} episodeIds - Un solo ID o un array de IDs de episodios.
- * @returns {Promise<{episodes: Episode[], info: Object}>} Un objeto con un array de objetos Episode y un objeto de información (simplificado).
+ * @param {number | number[]} episodeIds
+ * @returns {Promise<{episodes: Episode[], info: ApiInfo}>}
  */
-export async function getEpisodesByIds(episodeIds) {
+export async function getEpisodesByIds(
+    episodeIds: number | number[]
+): Promise<{ episodes: Episode[]; info: ApiInfo }> {
     if (!episodeIds || (Array.isArray(episodeIds) && episodeIds.length === 0)) {
         return { episodes: [], info: { count: 0, pages: 0, next: null, prev: null } };
     }
 
-    const idsString = Array.isArray(episodeIds) ? episodeIds.join(',') : episodeIds.toString();
-    const url = `https://rickandmortyapi.com/api/episode/${idsString}`;
+    const idsString: string = Array.isArray(episodeIds) ? episodeIds.join(',') : episodeIds.toString();
+    const url: string = `https://rickandmortyapi.com/api/episode/${idsString}`;
 
     const { datas, info } = await loadDataFromApiByIds(url, Episode.createFromApi);
-    return { episodes: datas, info: info };
+    return { episodes: datas as Episode[], info: info as ApiInfo };
 }

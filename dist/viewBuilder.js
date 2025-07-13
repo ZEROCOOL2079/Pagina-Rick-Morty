@@ -1,59 +1,65 @@
-import { Character, Episode } from './classes';
-import { ApiInfo } from './types';
-
-export function clearCardContainer(): void {
-    const cardContainer = document.getElementById("card-container") as HTMLDivElement | null;
+export function clearCardContainer() {
+    const cardContainer = document.getElementById("card-container");
     if (cardContainer) {
         cardContainer.innerHTML = "";
-    } else {
+    }
+    else {
         console.warn("Element with ID 'card-container' not found.");
     }
 }
-
-export function updatePagination(info: ApiInfo, pageNumber: number): void {
+export function updatePagination(info, pageNumber) {
     const prevPage = document.getElementById("prevPage");
     const nextPage = document.getElementById("nextPage");
-    const currentPageSpan = document.getElementById("currentPage") as HTMLSpanElement;
-
-    if (prevPage instanceof HTMLButtonElement) {
+    const currentPageSpan = document.getElementById("currentPage");
+    if (prevPage) {
         prevPage.disabled = info.prev === null;
     }
-
-    if (nextPage instanceof HTMLButtonElement) {
+    else {
+        console.warn("Element with ID 'prevPage' not found.");
+    }
+    if (nextPage) {
         nextPage.disabled = info.next === null;
     }
-
-    if (currentPageSpan instanceof HTMLSpanElement) {
+    else {
+        console.warn("Element with ID 'nextPage' not found.");
+    }
+    if (currentPageSpan) {
         currentPageSpan.textContent = `Página ${pageNumber} de ${info.pages}`;
     }
+    else {
+        console.warn("Element with ID 'currentPage' not found.");
+    }
 }
-
-export function disablePagination(): void {
+export function disablePagination() {
     const prevPage = document.getElementById("prevPage");
     const nextPage = document.getElementById("nextPage");
-
     if (prevPage instanceof HTMLButtonElement) {
         prevPage.disabled = true;
+    }
+    else {
+        console.warn("Element with ID 'prevPage' not found.");
     }
     if (nextPage instanceof HTMLButtonElement) {
         nextPage.disabled = true;
     }
+    else {
+        console.warn("Element with ID 'nextPage' not found.");
+    }
 }
-
-export function createCharacterCard(character: Character, firstEpisode: string): HTMLDivElement {
+export function createCharacterCard(character, firstEpisode) {
     const cardDiv = document.createElement("div");
     cardDiv.classList.add("card");
     cardDiv.dataset.id = character.id.toString();
-
     let statusClass = "";
     if (character.status === "Alive") {
         statusClass = "circle-status alive";
-    } else if (character.status === "Dead") {
+    }
+    else if (character.status === "Dead") {
         statusClass = "circle-status dead";
-    } else {
+    }
+    else {
         statusClass = "circle-status unknown";
     }
-
     cardDiv.innerHTML = `
         <div class="img-container">
             <img src="${character.imageUrl}" alt="${character.name}" />
@@ -81,8 +87,7 @@ export function createCharacterCard(character: Character, firstEpisode: string):
     `;
     return cardDiv;
 }
-
-export function createEpisodeCard(episode: Episode): HTMLDivElement {
+export function createEpisodeCard(episode) {
     const cardDiv = document.createElement("div");
     cardDiv.classList.add("card");
     cardDiv.dataset.id = episode.id.toString();

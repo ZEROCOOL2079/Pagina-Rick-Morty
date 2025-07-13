@@ -1,0 +1,394 @@
+/* Importa los estilos globales para que estén disponibles en esta página. */
+/* Asegúrate de que 'style-global.css' esté en la misma carpeta 'styles'. */
+@import "global.css";
+
+/* Estilos de la sección principal (comunes entre characters y episodes, pero específicos del 'main' content) */
+main {
+    display: flex;
+    width: 100%;
+    flex-grow: 1;
+}
+
+main #section-api {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 100%;
+    background-color: #5F738A;
+    width: 100%;
+    align-items: center;
+    padding: 20px;
+}
+
+#section-api h1 {
+    margin-top: 0;
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #6cff57;
+}
+
+/* Estilos de los filtros y botones (la estructura es común con personajes, pero el contenido de los filtros es específico de episodios) */
+.filters-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.filters-container {
+    text-align: center;
+    color: white;
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 20px;
+}
+
+.filters-container:last-child {
+    margin-right: 0;
+}
+
+.filters-container label {
+    margin-right: 10px;
+    font-size: 1.1em;
+    font-weight: bold;
+    vertical-align: middle;
+}
+
+/* Nota: No hay select específico en tu último código para episodios, pero si tuvieras uno, iría aquí */
+/* .filters-container select { ... } */
+
+.filters-container input[type="text"] {
+    padding: 8px 12px;
+    border-radius: 5px;
+    border: 1px solid #6c757d;
+    background-color: #4a5a6b;
+    color: white;
+    font-size: 1em;
+    vertical-align: middle;
+}
+
+.filters-container input[type="text"]:focus {
+    outline: none;
+    border-color: #6cff57;
+    box-shadow: 0 0 0 0.2rem rgba(108, 255, 87, 0.25);
+}
+
+.filters-container button {
+    background-color: #34495e;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+.filters-container button:hover {
+    background-color: #4a627a;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.filters-container button:disabled {
+    background-color: #7f8c8d;
+    cursor: not-allowed;
+}
+
+.favoritesBtnContainer {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+    width: 10%;
+}
+
+.buttonShowFavorites {
+    background-color: #34495e;
+    color: #ecf0f1;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.buttonShowFavorites:hover {
+    background-color: #4a627a;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.buttonShowFavorites:active {
+    background-color: #2c3e50;
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Contenedor de tarjetas */
+#card-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    margin-bottom: 20px;
+    padding: 0 10px;
+}
+
+/*
+* Estilos específicos de la tarjeta de episodio
+* Estos sobrescriben los estilos de .card que pudieran venir de style-global.css
+* para adaptar la tarjeta a la visualización de episodios.
+*/
+.card {
+    display: flex;
+    flex-direction: column; /* La tarjeta de episodio es una columna */
+    align-items: stretch; /* Se estira para ocupar el ancho disponible */
+    width: 380px; /* Ancho fijo para las tarjetas de episodio */
+    background-color: #ECF0F1;
+    border: 1px solid #7F8C8D;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.2s ease-in-out;
+    /* La siguiente línea .card { border-right: 1px solid #7F8C8D; } no tiene efecto aquí
+       porque está duplicada y la original del personaje tiene flex-direction: row.
+       Como ahora es column, ese borde no se vería bien. Se elimina. */
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card .img-container {
+    display: none; /* Las tarjetas de episodio no tienen contenedor de imagen */
+}
+
+.card .card-details {
+    width: 100%; /* El detalle de la tarjeta ocupa todo el ancho */
+    padding: 1rem;
+    border-right: none; /* No hay borde a la derecha cuando es columna */
+    color: #2c3e50;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Estilos de las secciones de detalle dentro de la tarjeta (comunes) */
+.card .card-details .detail-section {
+    display: flex;
+    justify-content: flex-start;
+    flex: 1 1 0%;
+    flex-direction: column;
+    box-sizing: inherit;
+}
+
+.card-details .detail-section .text-name {
+    font-size: 1.5rem;
+    color: #2c3e50;
+    margin: 0px;
+    padding: 0px;
+}
+
+.card-details .detail-section span {
+    font-size: 16px;
+    font-weight: 500;
+    margin-top: 1px;
+}
+
+.text-grey {
+    color: gray;
+}
+
+.card .detail-section .text-detail {
+    font-size: 16px;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+/* Estilos para la lista de personajes dentro de una tarjeta de episodio */
+.characters-list-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 5px;
+    max-height: 90px; /* Altura máxima para hacerla desplazable si hay muchos */
+    overflow-y: auto;
+    padding-right: 5px; /* Espacio para el scrollbar */
+}
+
+/* Estilos de la barra de desplazamiento para la lista de personajes */
+.characters-list-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.characters-list-container::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 3px;
+}
+
+.characters-list-container::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+}
+
+/* Estilos del "chip" individual de personaje */
+.character-chip {
+    background-color: #4CAF50; /* Color de fondo del chip */
+    color: #2c3e50;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    white-space: nowrap; /* Evita que el texto se rompa */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Puntos suspensivos si el texto es muy largo */
+    max-width: 100%;
+    font-weight: bold;
+}
+
+/* Estilos de las secciones del modal específicas de episodios (si es que muestran personajes relacionados) */
+.modal-episode-section, /* Esto puede ser para detalles del episodio en el modal */
+.modal-characters-section { /* Esto si un modal de episodio muestra sus personajes */
+    width: 100%;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #555;
+}
+
+.modal-episode-section h3,
+.modal-characters-section h3 {
+    color: #f7f7f7;
+    margin-bottom: 15px;
+    font-size: 1.3em;
+    text-align: center;
+}
+
+.characters-list-container.modal-characters-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    overflow-y: auto;
+    max-height: 200px;
+    padding: 5px;
+}
+
+.characters-list-container.modal-characters-list .character-chip {
+    background-color: #606060;
+    color: #f7f7f7;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    white-space: normal;
+    word-break: break-word;
+    text-align: center;
+    flex-shrink: 0;
+    min-width: 50px;
+    max-width: 100%;
+}
+
+/* Paginación (es la misma que en personajes, y es global, pero la incluimos para completitud aquí) */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.pagination button {
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    border: none;
+    padding: 10px 20px;
+    margin: 0 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+.pagination button:hover:not(:disabled) {
+    background-color: #34495e;
+}
+
+.pagination button:disabled {
+    background-color: #7f8c8d;
+    cursor: not-allowed;
+}
+
+#currentPage {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #ecf0f1;
+    margin: 0 10px;
+}
+
+/* Media Queries específicas de episodios (ajustan el diseño en pantallas pequeñas) */
+@media (max-width: 768px) {
+    main #section-api {
+        padding: 10px;
+    }
+
+    .filters-wrapper {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .filters-container {
+        margin-right: 0;
+        margin-bottom: 15px;
+        width: 90%;
+    }
+
+    .filters-container label {
+        margin-bottom: 5px;
+        margin-right: 0;
+        display: block;
+    }
+
+    .filters-container input[type="text"],
+    .filters-container button {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 5px;
+    }
+
+    .card {
+        flex-direction: column;
+        width: 90%;
+    }
+
+    .card .card-details {
+        width: 100%;
+        padding: 1rem;
+    }
+
+    .characters-list-container.modal-characters-list {
+        max-height: 180px;
+    }
+
+    .characters-list-container.modal-characters-list .character-chip {
+        font-size: 0.85em;
+        padding: 5px 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    #section-api h1 {
+        font-size: 1.8em;
+    }
+
+    .characters-list-container.modal-characters-list {
+        max-height: 150px;
+    }
+
+    .characters-list-container.modal-characters-list .character-chip {
+        font-size: 0.8em;
+        padding: 4px 8px;
+    }
+}

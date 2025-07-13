@@ -1,20 +1,15 @@
-import { getCharacters, getNameUrl, getCharactersByIds } from "./apiService";
-import { createCharacterCard, clearCardContainer, updatePagination, disablePagination } from "./viewBuilder";
-import { modalCharacters } from "./modalBuilder";
-import { isFavorite, changeFavorite, getFavorites } from "./favoriteStorage";
-
-import { Character } from './classes';
-import { ApiInfo} from './types';
-
-let currentPage: number = 1;
-let totalPages: number = 1;
-let currentStatusFilter: string = "";
-let currentNameFilter: string = "";
-let showFavoritesOnly: boolean = false;
-
-const ITEMS_PER_PAGE_FAVORITES: number = 20;
-let allFavoriteCharacters: Character[] = [];
-
+// src/characterLogic.ts
+import { getCharacters, getNameUrl, getCharactersByIds } from "./apiService.js";
+import { createCharacterCard, clearCardContainer, updatePagination, disablePagination } from "./viewBuilder.js";
+import { modalCharacters } from "./modalBuilder.js";
+import { isFavorite, changeFavorite, getFavorites } from "./favoriteStorage.js";
+let currentPage = 1;
+let totalPages = 1;
+let currentStatusFilter = "";
+let currentNameFilter = "";
+let showFavoritesOnly = false;
+const ITEMS_PER_PAGE_FAVORITES = 20;
+let allFavoriteCharacters = [];
 /**
  * Renderiza las tarjetas de personajes en el contenedor principal.
  * Gestiona la visualización de personajes normales con filtros o solo personajes favoritos con paginación local.
@@ -22,44 +17,39 @@ let allFavoriteCharacters: Character[] = [];
  * @param {number} page - El número de página actual a renderizar.
  * @returns {Promise<void>}
  */
-async function render(page: number): Promise<void> {
-    const cardContainer = document.getElementById("card-container") as HTMLDivElement | null;
+async function render(page) {
+    const cardContainer = document.getElementById("card-container");
     if (!cardContainer) {
         console.error("No se encontró el contenedor de tarjetas de personajes.");
         return;
     }
-
     disablePagination();
-
-    let charactersToRender: Character[] = [];
-    let info: ApiInfo | null = null;
-
+    let charactersToRender = [];
+    let info = null;
     if (showFavoritesOnly) {
-        const favoriteCharacterIds: number[] = getFavorites().Character;
-
+        const favoriteCharacterIds = getFavorites().Character;
         if (favoriteCharacterIds && favoriteCharacterIds.length > 0) {
             const response = await getCharactersByIds(favoriteCharacterIds);
             allFavoriteCharacters = response.characters;
-
-            const startIndex: number = (page - 1) * ITEMS_PER_PAGE_FAVORITES;
-            const endIndex: number = startIndex + ITEMS_PER_PAGE_FAVORITES;
+            const startIndex = (page - 1) * ITEMS_PER_PAGE_FAVORITES;
+            const endIndex = startIndex + ITEMS_PER_PAGE_FAVORITES;
             charactersToRender = allFavoriteCharacters.slice(startIndex, endIndex);
-
             totalPages = Math.ceil(allFavoriteCharacters.length / ITEMS_PER_PAGE_FAVORITES);
             updatePagination({
                 count: allFavoriteCharacters.length,
                 pages: totalPages,
                 prev: page > 1 ? "some-url" : null,
                 next: page < totalPages ? "some-url" : null
-            } as ApiInfo, page);
-        } else {
+            }, page);
+        }
+        else {
             allFavoriteCharacters = [];
             charactersToRender = [];
             totalPages = 1;
             updatePagination({ count: 0, pages: 1, prev: null, next: null }, 1);
         }
-
-    } else {
+    }
+    else {
         const filters = {
             name: currentNameFilter,
             status: currentStatusFilter,
@@ -67,39 +57,36 @@ async function render(page: number): Promise<void> {
         const apiResponse = await getCharacters(page, filters);
         charactersToRender = apiResponse.characters;
         info = apiResponse.info;
-
         if (info) {
             totalPages = info.pages;
             updatePagination(info, page);
-        } else {
+        }
+        else {
             totalPages = 1;
             updatePagination({ prev: null, next: null, pages: 1, count: 0 }, page);
         }
     }
-
     clearCardContainer();
-
     if (charactersToRender && charactersToRender.length > 0) {
         for (const character of charactersToRender) {
-            let firstEpisodeNameForCard: string;
+            let firstEpisodeNameForCard;
             if (character.episodes && character.episodes.length > 0) {
-                const firstEpisodeNames: string[] = await getNameUrl([character.episodes[0]]);
+                const firstEpisodeNames = await getNameUrl([character.episodes[0]]);
                 firstEpisodeNameForCard = firstEpisodeNames[0];
-            } else {
+            }
+            else {
                 firstEpisodeNameForCard = "Unknown";
             }
-
-            const cardElement: HTMLDivElement = createCharacterCard(character, firstEpisodeNameForCard);
-
-            const favBtn = cardElement.querySelector(".favorite-button") as HTMLButtonElement | null;
+            const cardElement = createCharacterCard(character, firstEpisodeNameForCard);
+            const favBtn = cardElement.querySelector(".favorite-button");
             if (favBtn) {
                 if (isFavorite(character.id, "Character")) {
                     favBtn.classList.add("active");
-                } else {
+                }
+                else {
                     favBtn.classList.remove("active");
                 }
-
-                favBtn.addEventListener("click", (e: MouseEvent) => {
+                favBtn.addEventListener("click", (e) => {
                     e.stopPropagation();
                     changeFavorite(character.id, "Character", favBtn);
                     if (showFavoritesOnly) {
@@ -107,26 +94,24 @@ async function render(page: number): Promise<void> {
                     }
                 });
             }
-
             cardElement.addEventListener("click", () => modalCharacters(character));
             cardContainer.appendChild(cardElement);
         }
-    } else {
+    }
+    else {
         cardContainer.innerHTML =
             "<p>No se encontraron personajes con los filtros aplicados.</p>";
     }
     currentPage = page;
 }
-
 /**
  * Configura los event listeners para los botones de paginación (anterior y siguiente).
  * @function
  * @returns {void}
  */
-function setupPagination(): void {
-    const prevPage = document.getElementById("prevPage") as HTMLButtonElement | null;
-    const nextPage = document.getElementById("nextPage") as HTMLButtonElement | null;
-
+function setupPagination() {
+    const prevPage = document.getElementById("prevPage");
+    const nextPage = document.getElementById("nextPage");
     if (prevPage) {
         prevPage.addEventListener("click", () => {
             if (currentPage > 1) {
@@ -134,7 +119,6 @@ function setupPagination(): void {
             }
         });
     }
-
     if (nextPage) {
         nextPage.addEventListener("click", () => {
             if (currentPage < totalPages) {
@@ -143,79 +127,76 @@ function setupPagination(): void {
         });
     }
 }
-
 /**
  * Configura los event listeners para los filtros de personajes y el botón de favoritos.
  * @function
  * @returns {void}
  */
-function setupCharacterFilters(): void {
-    const statusFilterSelect = document.getElementById("statusFilter") as HTMLSelectElement | null;
-    const characterNameFilterInput = document.getElementById(
-        "characterNameFilter"
-    ) as HTMLInputElement | null;
-    const filterCharactersByNameButton = document.getElementById(
-        "filterCharactersByNameButton"
-    ) as HTMLButtonElement | null;
-    const favoritesButton = document.querySelector(".favoritesBtnContainer .buttonShowFavorites") as HTMLButtonElement | null;
-
-
+function setupCharacterFilters() {
+    const statusFilterSelect = document.getElementById("statusFilter");
+    const characterNameFilterInput = document.getElementById("characterNameFilter");
+    const filterCharactersByNameButton = document.getElementById("filterCharactersByNameButton");
+    const favoritesButton = document.querySelector(".favoritesBtnContainer .buttonShowFavorites");
     if (statusFilterSelect) {
-        statusFilterSelect.addEventListener("change", (event: Event) => {
-            currentStatusFilter = (event.target as HTMLSelectElement).value;
+        statusFilterSelect.addEventListener("change", (event) => {
+            currentStatusFilter = event.target.value;
             showFavoritesOnly = false;
-            if (characterNameFilterInput) characterNameFilterInput.value = "";
+            if (characterNameFilterInput)
+                characterNameFilterInput.value = "";
             currentPage = 1;
             render(currentPage);
         });
-    } else {
+    }
+    else {
         console.warn("Status Filter Select not found.");
     }
-
     if (filterCharactersByNameButton && characterNameFilterInput) {
         filterCharactersByNameButton.addEventListener("click", () => {
             currentNameFilter = characterNameFilterInput.value.trim();
             showFavoritesOnly = false;
-            if (statusFilterSelect) statusFilterSelect.value = "";
+            if (statusFilterSelect)
+                statusFilterSelect.value = "";
             currentPage = 1;
             render(currentPage);
         });
-
-        characterNameFilterInput.addEventListener("keypress", (event: KeyboardEvent) => {
+        characterNameFilterInput.addEventListener("keypress", (event) => {
             if (event.key === "Enter") {
                 filterCharactersByNameButton.click();
             }
         });
-    } else {
-        if (!filterCharactersByNameButton) console.warn("Filter Characters By Name Button not found.");
-        if (!characterNameFilterInput) console.warn("Character Name Filter Input not found.");
     }
-
+    else {
+        if (!filterCharactersByNameButton)
+            console.warn("Filter Characters By Name Button not found.");
+        if (!characterNameFilterInput)
+            console.warn("Character Name Filter Input not found.");
+    }
     if (favoritesButton) {
         favoritesButton.addEventListener("click", () => {
             showFavoritesOnly = !showFavoritesOnly;
             currentPage = 1;
             currentStatusFilter = "";
             currentNameFilter = "";
-            if (statusFilterSelect) statusFilterSelect.value = "";
-            if (characterNameFilterInput) characterNameFilterInput.value = "";
+            if (statusFilterSelect)
+                statusFilterSelect.value = "";
+            if (characterNameFilterInput)
+                characterNameFilterInput.value = "";
             render(currentPage);
         });
-    } else {
+    }
+    else {
         console.warn("Favorites button not found for characters.");
     }
 }
-
 /**
  * Inicializa la página de personajes al configurar la paginación, los filtros y realizar el renderizado inicial.
  * @async
  * @function
  * @returns {Promise<void>}
  */
-async function initializeCharactersPage(): Promise<void> {
+async function initializeCharactersPage() {
     setupPagination();
     setupCharacterFilters();
     await render(currentPage);
 }
-
 document.addEventListener("DOMContentLoaded", initializeCharactersPage);

@@ -1,0 +1,353 @@
+/* Importa los estilos globales para que estén disponibles */
+@import "global.css";
+
+/* Estilos de la sección principal para personajes (es común con episodios) */
+main {
+    display: flex;
+    width: 100%;
+    flex-grow: 1;
+}
+
+main #section-api {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 100%;
+    background-color: #5F738A;
+    width: 100%;
+    align-items: center;
+    padding: 20px;
+}
+
+#section-api h1 {
+    margin-top: 0;
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #6cff57;
+}
+
+/* Estilos de los filtros y botones específicos de personajes */
+.filters-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.filters-container {
+    text-align: center;
+    color: white;
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 20px;
+}
+
+.filters-container:last-child {
+    margin-right: 0;
+}
+
+.filters-container label {
+    margin-right: 10px;
+    font-size: 1.1em;
+    font-weight: bold;
+    vertical-align: middle;
+}
+
+.filters-container select {
+    padding: 8px 12px;
+    border-radius: 5px;
+    border: 1px solid #6c757d;
+    background-color: #4a5a6b;
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+    appearance: none;
+    background-repeat: no-repeat;
+    background-position: right 10px top 50%;
+    background-size: 12px auto;
+    vertical-align: middle;
+}
+
+.filters-container select:focus {
+    outline: none;
+    border-color: #6cff57;
+    box-shadow: 0 0 0 0.2rem rgba(108, 255, 87, 0.25);
+}
+
+.filters-container input[type="text"] {
+    padding: 8px 12px;
+    border-radius: 5px;
+    border: 1px solid #6c757d;
+    background-color: #4a5a6b;
+    color: white;
+    font-size: 1em;
+    vertical-align: middle;
+}
+
+.filters-container input[type="text"]:focus {
+    outline: none;
+    border-color: #6cff57;
+    box-shadow: 0 0 0 0.2rem rgba(108, 255, 87, 0.25);
+}
+
+.filters-container button {
+    background-color: #34495e;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+.filters-container button:hover {
+    background-color: #4a627a;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.filters-container button:disabled {
+    background-color: #7f8c8d;
+    cursor: not-allowed;
+}
+
+.favoritesBtnContainer {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+    width: 10%; /* Ajustar si es necesario en base al layout final */
+}
+
+.buttonShowFavorites {
+    background-color: #34495e;
+    color: #ecf0f1;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.buttonShowFavorites:hover {
+    background-color: #4a627a;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.buttonShowFavorites:active {
+    background-color: #2c3e50;
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilos del contenedor de tarjetas */
+#card-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    margin-bottom: 20px;
+    padding: 0 10px;
+}
+
+/* Estilos de la tarjeta de personaje */
+.card {
+    display: flex;
+    align-items: center;
+    width: 380px;
+    background-color: #ECF0F1;
+    border: 1px solid #7F8C8D;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card .img-container {
+    display: flex;
+    flex-shrink: 0;
+    width: 43%;
+    height: 100%;
+    overflow: hidden;
+    border-right: 1px solid #7F8C8D;
+    justify-content: center;
+    align-items: center;
+}
+
+.card .img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card .card-details {
+    flex: 3 1 0%;
+    position: relative;
+    padding: 0.75rem;
+    color: #2c3e50;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.card .card-details .detail-section {
+    display: flex;
+    justify-content: flex-start;
+    flex: 1 1 0%;
+    flex-direction: column;
+    box-sizing: inherit;
+}
+
+.card-details .detail-section .text-name {
+    font-size: 1.5rem;
+    color: #2c3e50;
+    margin: 0px;
+    padding: 0px;
+}
+
+.card-details .detail-section .status-character {
+    display: flex;
+    align-items: center;
+    text-transform: capitalize;
+    box-sizing: inherit;
+    color: #2c3e50;
+}
+
+.circle-status {
+    height: 8px;
+    width: 8px;
+    margin-right: 0.375rem;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.circle-status.alive {
+    background-color: #55cc44;
+}
+
+.circle-status.dead {
+    background-color: #d63d2e;
+}
+
+.circle-status.unknown {
+    background-color: #9e9e9e;
+}
+
+.card-details .detail-section span {
+    font-size: 16px;
+    font-weight: 500;
+    margin-top: 1px;
+}
+
+.text-grey {
+    color: gray;
+}
+
+.card .detail-section .text-detail {
+    font-size: 16px;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+/* Paginación */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.pagination button {
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    border: none;
+    padding: 10px 20px;
+    margin: 0 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+.pagination button:hover:not(:disabled) {
+    background-color: #34495e;
+}
+
+.pagination button:disabled {
+    background-color: #7f8c8d;
+    cursor: not-allowed;
+}
+
+#currentPage {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #ecf0f1;
+    margin: 0 10px;
+}
+
+/* Media Queries específicas de personajes */
+@media (max-width: 768px) {
+    main #section-api {
+        padding: 10px;
+    }
+
+    .filters-wrapper {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .filters-container {
+        margin-right: 0;
+        margin-bottom: 15px;
+        width: 90%;
+    }
+
+    .filters-container label {
+        margin-bottom: 5px;
+        margin-right: 0;
+        display: block;
+    }
+
+    .filters-container select,
+    .filters-container input[type="text"],
+    .filters-container button {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 5px;
+    }
+
+    .card {
+        flex-direction: column;
+        width: 90%;
+    }
+
+    .card .img-container {
+        width: 100%;
+        height: 200px;
+        border-right: none;
+        border-bottom: 1px solid #7F8C8D;
+    }
+
+    .card .card-details {
+        width: 100%;
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    #section-api h1 {
+        font-size: 1.8em;
+    }
+}

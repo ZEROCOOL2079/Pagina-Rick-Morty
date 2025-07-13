@@ -1,0 +1,110 @@
+/* Importa los estilos globales para que estén disponibles */
+@import "global.css";
+
+/* Estilos específicos para la página de inicio */
+.home-main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    background-color: #5F738A;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.hero-section {
+    max-width: 800px;
+    background-color: #3C3E44;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    color: #ECF0F1;
+}
+
+.hero-title {
+    font-size: 3.5em;
+    color: #6cff57;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.hero-description {
+    font-size: 1.3em;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.hero-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 30px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 1.2em;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    min-width: 200px;
+}
+
+.btn i {
+    margin-right: 10px;
+}
+
+.btn-characters {
+    background-color: #2980B9;
+    color: white;
+}
+
+.btn-characters:hover {
+    background-color: #3498DB;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.btn-episodes {
+    background-color: #F39C12;
+    color: white;
+}
+
+.btn-episodes:hover {
+    background-color: #F8C471;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Media Queries para responsividad */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5em;
+    }
+    .hero-description {
+        font-size: 1.1em;
+    }
+    .hero-buttons {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .btn {
+        width: 80%;
+        min-width: unset;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-title {
+        font-size: 2em;
+    }
+    .hero-section {
+        padding: 25px;
+    }
+}
